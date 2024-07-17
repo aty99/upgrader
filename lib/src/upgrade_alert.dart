@@ -33,6 +33,7 @@ class UpgradeAlert extends StatefulWidget {
     this.dialogKey,
     this.navigatorKey,
     this.child,
+    this.customDialogBody,
   }) : upgrader = upgrader ?? Upgrader.sharedInstance;
 
   /// The upgraders used to configure the upgrade dialog.
@@ -80,6 +81,8 @@ class UpgradeAlert extends StatefulWidget {
 
   /// The [child] contained by the widget.
   final Widget? child;
+
+  final Widget? customDialogBody;
 
   @override
   UpgradeAlertState createState() => UpgradeAlertState();
@@ -302,8 +305,8 @@ class UpgradeAlertState extends State<UpgradeAlert> {
             ],
           ));
     }
-    final textTitle = Text(title, key: const Key('upgrader.dialog.title'));
-    final content = Container(
+    final textTitle  = Text(title, key: const Key('upgrader.dialog.title'));
+    final content = widget.customDialogBody ?? Container(
         constraints: const BoxConstraints(maxHeight: 400),
         child: SingleChildScrollView(
             child: Column(
