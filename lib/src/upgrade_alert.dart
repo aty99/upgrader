@@ -17,24 +17,27 @@ enum UpgradeDialogStyle { cupertino, material }
 /// with overridden methods.
 class UpgradeAlert extends StatefulWidget {
   /// Creates a new [UpgradeAlert].
-  UpgradeAlert({
-    super.key,
-    Upgrader? upgrader,
-    this.barrierDismissible = false,
-    this.dialogStyle = UpgradeDialogStyle.material,
-    this.onIgnore,
-    this.onLater,
-    this.onUpdate,
-    this.shouldPopScope,
-    this.showIgnore = true,
-    this.showLater = true,
-    this.showReleaseNotes = true,
-    this.cupertinoButtonTextStyle,
-    this.dialogKey,
-    this.navigatorKey,
-    this.child,
-    this.customDialogBody,
-  }) : upgrader = upgrader ?? Upgrader.sharedInstance;
+  UpgradeAlert(
+      {super.key,
+      Upgrader? upgrader,
+      this.barrierDismissible = false,
+      this.dialogStyle = UpgradeDialogStyle.material,
+      this.onIgnore,
+      this.onLater,
+      this.onUpdate,
+      this.shouldPopScope,
+      this.showIgnore = true,
+      this.showLater = true,
+      this.showReleaseNotes = true,
+      this.cupertinoButtonTextStyle,
+      this.dialogKey,
+      this.navigatorKey,
+      this.child,
+      this.customDialogBody,
+      this.message,
+      this.title,
+      this.customButtons})
+      : upgrader = upgrader ?? Upgrader.sharedInstance;
 
   /// The upgraders used to configure the upgrade dialog.
   final Upgrader upgrader;
@@ -83,6 +86,12 @@ class UpgradeAlert extends StatefulWidget {
   final Widget? child;
 
   final Widget? customDialogBody;
+
+  final String? title;
+
+  final String? message;
+
+  final bool? customButtons;
 
   @override
   UpgradeAlertState createState() => UpgradeAlertState();
@@ -147,8 +156,8 @@ class UpgradeAlertState extends State<UpgradeAlert> {
         showTheDialog(
           key: widget.dialogKey ?? const Key('upgrader_alert_dialog'),
           context: context,
-          title: appMessages.message(UpgraderMessage.title),
-          message: widget.upgrader.body(appMessages),
+          title: widget.title ?? appMessages.message(UpgraderMessage.title),
+          message: widget.message ?? widget.upgrader.body(appMessages),
           releaseNotes:
               shouldDisplayReleaseNotes ? widget.upgrader.releaseNotes : null,
           barrierDismissible: widget.barrierDismissible,
@@ -305,22 +314,25 @@ class UpgradeAlertState extends State<UpgradeAlert> {
             ],
           ));
     }
-    final textTitle  = Text(title, key: const Key('upgrader.dialog.title'));
-    final content = widget.customDialogBody ?? Container(
-        constraints: const BoxConstraints(maxHeight: 400),
-        child: SingleChildScrollView(
-            child: Column(
-          crossAxisAlignment:
-              cupertino ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(message),
-            Padding(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: Text(messages.message(UpgraderMessage.prompt) ?? '')),
-            if (notes != null) notes,
-          ],
-        )));
+    final textTitle = Text(title, key: const Key('upgrader.dialog.title'));
+    final content = widget.customDialogBody ??
+        Container(
+            constraints: const BoxConstraints(maxHeight: 400),
+            child: SingleChildScrollView(
+                child: Column(
+              crossAxisAlignment: cupertino
+                  ? CrossAxisAlignment.center
+                  : CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(message),
+                Padding(
+                    padding: const EdgeInsets.only(top: 15.0),
+                    child:
+                        Text(messages.message(UpgraderMessage.prompt) ?? '')),
+                if (notes != null) notes,
+              ],
+            )));
     final actions = <Widget>[
       if (showIgnore)
         button(cupertino, messages.message(UpgraderMessage.buttonTitleIgnore),
@@ -341,11 +353,27 @@ class UpgradeAlertState extends State<UpgradeAlert> {
 
   Widget button(bool cupertino, String? text, BuildContext context,
       VoidCallback? onPressed) {
-    return cupertino
-        ? CupertinoDialogAction(
-            textStyle: widget.cupertinoButtonTextStyle,
-            onPressed: onPressed,
-            child: Text(text ?? ''))
-        : TextButton(onPressed: onPressed, child: Text(text ?? ''));
+    return widget.customButtons == true
+        ? InkWell(
+            onTap: onPressed,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              decoration: BoxDecoration(
+                color: const Color(0xFF4F5748),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Text(
+                text ?? '',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          )
+        : cupertino
+            ? CupertinoDialogAction(
+                textStyle: widget.cupertinoButtonTextStyle,
+                onPressed: onPressed,
+                child: Text(text ?? ''))
+            : TextButton(onPressed: onPressed, child: Text(text ?? ''));
   }
 }
