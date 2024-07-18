@@ -354,20 +354,24 @@ class UpgradeAlertState extends State<UpgradeAlert> {
   Widget button(bool cupertino, String? text, BuildContext context,
       VoidCallback? onPressed) {
     return widget.customButtons == true
-        ? ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0)),
-                backgroundColor: const Color(0xFF4F5748),
-                elevation: 0.0),
-            onPressed: onPressed,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Text(
-                text ?? '',
-                style: const TextStyle(color: Colors.white),
-              ),
-            ))
+        ? Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0)),
+                    backgroundColor: const Color(0xFF4F5748),
+                    elevation: 0.0),
+                onPressed: onPressed,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Text(
+                    text ?? '',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                )),
+          )
         : cupertino
             ? CupertinoDialogAction(
                 textStyle: widget.cupertinoButtonTextStyle,
